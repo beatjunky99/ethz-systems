@@ -26,6 +26,15 @@ do { \
 } while(0);
 
 #ifdef DEBUG
+#	define DEBUG_PRINT(argfmt, arg) \
+	do { \
+		printf(#arg": %"argfmt"\n", arg);\
+	} while(0);
+#else
+#	define DEBUG_PRINT(argfmt, arg)
+#endif
+
+#ifdef DEBUG
 #	define DEBUG_PRINT_HEX(lenfmt, arg) \
 	do { \
 		printf(#arg": 0x%"lenfmt"x\n", arg);\
