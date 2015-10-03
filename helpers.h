@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 #include <stdint.h>
+#include <stdarg.h>
+#include <string.h>
 
 #define PRINT(argfmt, arg) \
 do { \
@@ -84,7 +86,7 @@ do { \
 		for(uint64_t i = 0; i < array_length; i++){\
 			__PRINT_ARRAY_ELEM(array_p+i, i, array_type, array_fmt);\
 		}\
-		printf("]\n\n");\
+		puts("]\n");\
 	} while(0);
 #else
 #	define __PRINT_ARRAY_ELEM(arg, array_t, array_f) \
@@ -100,8 +102,82 @@ do { \
 			__PRINT_ARRAY_ELEM(array_p+i, array_type, array_fmt);\
 			if(i != al1){printf(", ");}\
 		}\
-		printf("]\n");\
+		puts("]");\
 	} while(0);
 #endif
+
+typedef struct print_struct_member_info_t {
+	char *member_name, *type;
+	int type_length, print_type;
+} PrintStructMemberInfo;
+
+#define PRINT_STRUCT_INTEGER_TYPE 0
+#define PRINT_STRUCT_FLOATING_POINT_TYPE 1
+#define PRINT_STRUCT_OTHER_TYPE 2
+
+#ifdef DEBUG
+#define __PRINT_STRUCT_NAME(struct_t, struct_n) printf("struct %s %s (%p) {\n", #struct_t, #struct_n, (&struct_n));
+#define __CREATE_STRUCT_ENTRY_FORMAT(buf, type, address) snprintf(buf, sizeof(buf), "\t%%s => %%%s (%p),\n", type, (address));
+#else
+#define __PRINT_STRUCT_NAME(struct_t, struct_n) printf("struct %s %s {\n", #struct_t, #struct_n);
+#define __CREATE_STRUCT_ENTRY_FORMAT(buf, type, address) snprintf(buf, sizeof(buf), "\t%%s => %%%s,\n", type);
+#endif
+
+#define __PRINT_STRUCT_UNKNOWN_TYPE(member_name, address) printf("\t%s => %p,\n", member_name, (address));
+
+#define PRINT_SIMPLE_STRUCT(struct_n, struct_t, num_fields, print_struct_member_info_array) \
+do { \
+	char* struct_start = (char*)(&struct_n); \
+	__PRINT_STRUCT_NAME(struct_t, struct_n); \
+	unsigned long offset = 0; \
+	PrintStructMemberInfo t; \
+	int loop_term = (int)(num_fields); \
+	for (int i = 0; i < loop_term; i++) { \
+		t = (print_struct_member_info_array)[i]; \
+		char* member_name = t.member_name; \
+		char* type = t.type; \
+		int type_len = t.type_length; \
+		int fp_type = t.print_type; \
+		if(fp_type >= PRINT_STRUCT_OTHER_TYPE){ \
+			 __PRINT_STRUCT_UNKNOWN_TYPE(member_name, (struct_start+offset)); \
+		} else { \
+			char buf[50]; \
+			__CREATE_STRUCT_ENTRY_FORMAT(buf, type, (struct_start+offset)); \
+			if(fp_type == PRINT_STRUCT_FLOATING_POINT_TYPE){ \
+				switch (type_len) { \
+					case sizeof(float): \
+						printf(buf, member_name, (float)*((float *)(struct_start+offset))); \
+						break; \
+					case sizeof(double): \
+						printf(buf, member_name, (double)*((double *)(struct_start+offset))); \
+						break; \
+					default: \
+						__PRINT_STRUCT_UNKNOWN_TYPE(member_name, (struct_start+offset)); \
+						break; \
+				} \
+			} else { \
+				switch (type_len) { \
+					case sizeof(u_int8_t): \
+						printf(buf, member_name, (u_int8_t)*((u_int8_t *)(struct_start+offset))); \
+						break; \
+					case sizeof(u_int16_t): \
+						printf(buf, member_name, (u_int16_t)*((u_int16_t *)(struct_start+offset))); \
+						break; \
+					case sizeof(u_int32_t): \
+						printf(buf, member_name, (u_int32_t)*((u_int32_t *)(struct_start+offset))); \
+						break; \
+					case sizeof(u_int64_t): \
+						printf(buf, member_name, (u_int64_t)*((u_int64_t *)(struct_start+offset))); \
+						break; \
+					default: \
+						__PRINT_STRUCT_UNKNOWN_TYPE(member_name, (struct_start+offset)); \
+						break; \
+				} \
+			} \
+		} \
+		offset += type_len;  \
+	} \
+	puts("}"); \
+} while(0);
 
 #endif //DEBUG_HELPERS_DEFINED
