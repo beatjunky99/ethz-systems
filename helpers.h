@@ -58,14 +58,14 @@ do { \
 #	define DEBUG_PRINT_BIN(arg) \
 	do { \
 		printf(#arg": ");\
-	    unsigned char *b = (unsigned char*) &arg;\
-	    unsigned char byte;\
-	    int i, j;\
-	    for (i=sizeof(arg)-1;i>=0;i--) {\
-	        for (j=7;j>=0;j--) {\
-	            byte = b[i] & (1<<j);\
-	            byte >>= j;\
-	            printf("%u", byte);\
+	    unsigned char *_______b = (unsigned char*) &arg;\
+	    unsigned char _______byte;\
+	    int _______i, _______j;\
+	    for (_______i=sizeof(arg)-1;_______i>=0;_______i--) {\
+	        for (_______j=7;_______j>=0;_______j--) {\
+	            _______byte = _______b[_______i] & (1<<_______j);\
+	            _______byte >>= _______j;\
+	            printf("%u", _______byte);\
 	        }\
 	    }\
 	    puts("");\
@@ -81,10 +81,10 @@ do { \
 	} while(0);
 #	define PRINT_ARRAY(array_ref, array_length, array_type, array_fmt) \
 	do { \
-		array_type const *array_p = (array_type const *)(array_ref);\
-		printf(#array_ref" (%p): [\n", array_p);\
-		for(uint64_t i = 0; i < array_length; i++){\
-			__PRINT_ARRAY_ELEM(array_p+i, i, array_type, array_fmt);\
+		array_type const *_______array_p = (array_type const *)(array_ref);\
+		printf(#array_ref" (%p): [\n", _______array_p);\
+		for(uint64_t _______i = 0; _______i < array_length; i++){\
+			__PRINT_ARRAY_ELEM(_______array_p+_______i, _______i, array_type, array_fmt);\
 		}\
 		puts("]\n");\
 	} while(0);
@@ -95,12 +95,12 @@ do { \
 	} while(0);
 #	define PRINT_ARRAY(array_ref, array_length, array_type, array_fmt) \
 	do { \
-		array_type const *array_p = (array_type const *)(array_ref);\
-		uint64_t al1 = array_length-1;\
+		array_type const *_______array_p = (array_type const *)(array_ref);\
+		uint64_t _______al1 = array_length-1;\
 		printf(#array_ref": [");\
-		for(uint64_t i = 0; i < array_length; i++){\
-			__PRINT_ARRAY_ELEM(array_p+i, array_type, array_fmt);\
-			if(i != al1){printf(", ");}\
+		for(uint64_t _______i = 0; _______i < array_length; i++){\
+			__PRINT_ARRAY_ELEM(array_p+_______i, array_type, array_fmt);\
+			if(_______i != _______al1){printf(", ");}\
 		}\
 		puts("]");\
 	} while(0);
@@ -127,55 +127,55 @@ typedef struct print_struct_member_info_t {
 
 #define PRINT_SIMPLE_STRUCT(struct_n, struct_t, num_fields, print_struct_member_info_array) \
 do { \
-	char* struct_start = (char*)(&struct_n); \
+	char* _______struct_start = (char*)(&struct_n); \
 	__PRINT_STRUCT_NAME(struct_t, struct_n); \
-	unsigned long offset = 0; \
-	PrintStructMemberInfo t; \
-	int loop_term = (int)(num_fields); \
-	for (int i = 0; i < loop_term; i++) { \
-		t = (print_struct_member_info_array)[i]; \
-		char* member_name = t.member_name; \
-		char* type = t.type; \
-		int type_len = t.type_length; \
-		int fp_type = t.print_type; \
-		if(fp_type >= PRINT_STRUCT_OTHER_TYPE){ \
-			 __PRINT_STRUCT_UNKNOWN_TYPE(member_name, (struct_start+offset)); \
+	unsigned long _______offset = 0; \
+	PrintStructMemberInfo _______t; \
+	int _______loop_term = (int)(num_fields); \
+	for (int _______i = 0; _______i < _______loop_term; i++) { \
+		_______t = (print_struct_member_info_array)[_______i]; \
+		char* _______member_name = _______t.member_name; \
+		char* _______type = _______t.type; \
+		int _______type_len = _______t.type_length; \
+		int _______fp_type = _______t.print_type; \
+		if(_______fp_type >= PRINT_STRUCT_OTHER_TYPE){ \
+			 __PRINT_STRUCT_UNKNOWN_TYPE(member_name, (_______struct_start+_______offset)); \
 		} else { \
-			char buf[50]; \
-			__CREATE_STRUCT_ENTRY_FORMAT(buf, type, (struct_start+offset)); \
-			if(fp_type == PRINT_STRUCT_FLOATING_POINT_TYPE){ \
-				switch (type_len) { \
+			char _______buf[50]; \
+			__CREATE_STRUCT_ENTRY_FORMAT(_______buf, _______type, (_______struct_start+_______offset)); \
+			if(_______fp_type == PRINT_STRUCT_FLOATING_POINT_TYPE){ \
+				switch (_______type_len) { \
 					case sizeof(float): \
-						printf(buf, member_name, (float)*((float *)(struct_start+offset))); \
+						printf(_______buf, _______member_name, (float)*((float *)(_______struct_start+_______offset))); \
 						break; \
 					case sizeof(double): \
-						printf(buf, member_name, (double)*((double *)(struct_start+offset))); \
+						printf(_______buf, _______member_name, (double)*((double *)(_______struct_start+_______offset))); \
 						break; \
 					default: \
-						__PRINT_STRUCT_UNKNOWN_TYPE(member_name, (struct_start+offset)); \
+						__PRINT_STRUCT_UNKNOWN_TYPE(_______member_name, (_______struct_start+_______offset)); \
 						break; \
 				} \
 			} else { \
-				switch (type_len) { \
+				switch (_______type_len) { \
 					case sizeof(u_int8_t): \
-						printf(buf, member_name, (u_int8_t)*((u_int8_t *)(struct_start+offset))); \
+						printf(_______buf, _______member_name, (u_int8_t)*((u_int8_t *)(_______struct_start+_______offset))); \
 						break; \
 					case sizeof(u_int16_t): \
-						printf(buf, member_name, (u_int16_t)*((u_int16_t *)(struct_start+offset))); \
+						printf(_______buf, _______member_name, (u_int16_t)*((u_int16_t *)(_______struct_start+_______offset))); \
 						break; \
 					case sizeof(u_int32_t): \
-						printf(buf, member_name, (u_int32_t)*((u_int32_t *)(struct_start+offset))); \
+						printf(_______buf, _______member_name, (u_int32_t)*((u_int32_t *)(_______struct_start+_______offset))); \
 						break; \
 					case sizeof(u_int64_t): \
-						printf(buf, member_name, (u_int64_t)*((u_int64_t *)(struct_start+offset))); \
+						printf(_______buf, _______member_name, (u_int64_t)*((u_int64_t *)(_______struct_start+_______offset))); \
 						break; \
 					default: \
-						__PRINT_STRUCT_UNKNOWN_TYPE(member_name, (struct_start+offset)); \
+						__PRINT_STRUCT_UNKNOWN_TYPE(_______member_name, (_______struct_start+_______offset)); \
 						break; \
 				} \
 			} \
 		} \
-		offset += type_len;  \
+		_______offset += _______type_len;  \
 	} \
 	puts("}"); \
 } while(0);
