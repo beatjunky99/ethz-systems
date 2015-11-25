@@ -9,6 +9,7 @@
 #define DEBUG_HELPERS_DEFINED 1
 
 #include <stdio.h>
+#include <inttypes.h>
 #include <stdint.h>
 #include <stdarg.h>
 #include <string.h>
@@ -83,7 +84,7 @@ do { \
 	do { \
 		array_type const *_______array_p = (array_type const *)(array_ref);\
 		printf(#array_ref" (%p): [\n", _______array_p);\
-		for(uint64_t _______i = 0; _______i < array_length; i++){\
+		for(uint64_t _______i = 0; _______i < array_length; _______i++){\
 			__PRINT_ARRAY_ELEM(_______array_p+_______i, _______i, array_type, array_fmt);\
 		}\
 		puts("]\n");\
@@ -98,7 +99,7 @@ do { \
 		array_type const *_______array_p = (array_type const *)(array_ref);\
 		uint64_t _______al1 = array_length-1;\
 		printf(#array_ref": [");\
-		for(uint64_t _______i = 0; _______i < array_length; i++){\
+		for(uint64_t _______i = 0; _______i < array_length; _______i++){\
 			__PRINT_ARRAY_ELEM(array_p+_______i, array_type, array_fmt);\
 			if(_______i != _______al1){printf(", ");}\
 		}\
@@ -132,14 +133,14 @@ do { \
 	unsigned long _______offset = 0; \
 	PrintStructMemberInfo _______t; \
 	int _______loop_term = (int)(num_fields); \
-	for (int _______i = 0; _______i < _______loop_term; i++) { \
+	for (int _______i = 0; _______i < _______loop_term; _______i++) { \
 		_______t = (print_struct_member_info_array)[_______i]; \
 		char* _______member_name = _______t.member_name; \
 		char* _______type = _______t.type; \
 		int _______type_len = _______t.type_length; \
 		int _______fp_type = _______t.print_type; \
 		if(_______fp_type >= PRINT_STRUCT_OTHER_TYPE){ \
-			 __PRINT_STRUCT_UNKNOWN_TYPE(member_name, (_______struct_start+_______offset)); \
+			 __PRINT_STRUCT_UNKNOWN_TYPE(_______member_name, (_______struct_start+_______offset)); \
 		} else { \
 			char _______buf[50]; \
 			__CREATE_STRUCT_ENTRY_FORMAT(_______buf, _______type, (_______struct_start+_______offset)); \
@@ -157,17 +158,17 @@ do { \
 				} \
 			} else { \
 				switch (_______type_len) { \
-					case sizeof(u_int8_t): \
-						printf(_______buf, _______member_name, (u_int8_t)*((u_int8_t *)(_______struct_start+_______offset))); \
+					case sizeof(uint8_t): \
+						printf(_______buf, _______member_name, (uint8_t)*((uint8_t *)(_______struct_start+_______offset))); \
 						break; \
-					case sizeof(u_int16_t): \
-						printf(_______buf, _______member_name, (u_int16_t)*((u_int16_t *)(_______struct_start+_______offset))); \
+					case sizeof(uint16_t): \
+						printf(_______buf, _______member_name, (uint16_t)*((uint16_t *)(_______struct_start+_______offset))); \
 						break; \
-					case sizeof(u_int32_t): \
-						printf(_______buf, _______member_name, (u_int32_t)*((u_int32_t *)(_______struct_start+_______offset))); \
+					case sizeof(uint32_t): \
+						printf(_______buf, _______member_name, (uint32_t)*((uint32_t *)(_______struct_start+_______offset))); \
 						break; \
-					case sizeof(u_int64_t): \
-						printf(_______buf, _______member_name, (u_int64_t)*((u_int64_t *)(_______struct_start+_______offset))); \
+					case sizeof(uint64_t): \
+						printf(_______buf, _______member_name, (uint64_t)*((uint64_t *)(_______struct_start+_______offset))); \
 						break; \
 					default: \
 						__PRINT_STRUCT_UNKNOWN_TYPE(_______member_name, (_______struct_start+_______offset)); \
